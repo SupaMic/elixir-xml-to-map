@@ -45,14 +45,7 @@ defmodule XmlToMap.NaiveMap do
   end
 
   def parse(list) when is_list(list) do
-    list = 
-      unless (list == [] || is_tuple(List.first(list))) do 
-        [h|t] = list
-        [{"text", [], h} | t]
-      else
-        list
-      end
-    parsed_list = Enum.map(list, &{to_string(elem(&1, 0)), parse(&1)})
+    parsed_list = Enum.map(list, &tuple_expand/1)
 
     content =
       Enum.reduce(parsed_list, %{}, fn {k, v}, acc ->
@@ -73,5 +66,13 @@ defmodule XmlToMap.NaiveMap do
       true -> nil
       _ -> content
     end
+  end
+  
+  def tuple_expand(element) when is_tuple(element) do
+    {to_string(elem(element, 0)), parse(element)}
+  end
+  
+  def tuple_expand(element) do
+    {"seg", %{"seg" => to_string(element) }}
   end
 end
