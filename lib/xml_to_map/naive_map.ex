@@ -45,6 +45,13 @@ defmodule XmlToMap.NaiveMap do
   end
 
   def parse(list) when is_list(list) do
+    list = 
+      unless (list == [] || is_tuple(List.first(list))) do 
+        [h|t] = list
+        [{"text", [], h} | t]
+      else
+        list
+      end
     parsed_list = Enum.map(list, &{to_string(elem(&1, 0)), parse(&1)})
 
     content =
